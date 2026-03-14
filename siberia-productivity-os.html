@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[AI] Productivity OS | The Operator , Siberia Institute</title>
+<meta name="description" content="Nível 1 (Tatic). Engenharia de Contexto para Eficiência Humano-Aumentada: do zero ao Prompt Architect, construindo seu Sistema Operacional pessoal com LLM de mercado em 30 dias.">
+<meta property="og:title" content="Saia do trabalho braçal. Domine a interação com a máquina.">
+<meta property="og:description" content="PBL: construa seu primeiro Agente de Produtividade Pessoal e sua biblioteca de contexto com LLM de mercado.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0A0A0A;--card:#161616;--card2:#1A1E1E;--ice:#F4F4F0;
+  --amber:#C8922A;--muted:#8A8A8A;--dim:#3A3A3A;
+  --border:rgba(138,138,138,0.14);--amber-s:rgba(200,146,42,0.06);
+  --steel:#2C2C2C;
+  --cyan:#0ABFCC;--cyan-dim:rgba(10,191,204,0.08);--cyan-border:rgba(10,191,204,0.25);
+  --cyan-glow:rgba(10,191,204,0.12);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--ice);font-family:'Inter',sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.serif{font-family:'Playfair Display',Georgia,serif}
+
+/* ── TACTICAL GRID BG ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(10,191,204,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(10,191,204,0.018) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(10,191,204,0.03) 0%,transparent 70%);
+}
+
+/* ── NOISE TEXTURE ── */
+.noise{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.032;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── NAV ── */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 48px;height:50px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .35s ease}
+.topnav.show{transform:translateY(0)}
+.nav-logo{height:28px;width:auto;display:block;object-fit:contain}
+.nav-brand span{color:var(--cyan)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-link{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--ice)}
+.nav-btn{background:var(--cyan);color:var(--black);border:none;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:9px 20px;cursor:pointer;transition:opacity .2s;text-decoration:none;display:inline-block;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+.nav-btn:hover{opacity:.85}
+
+/* ── TICKER ── */
+.ticker-rail{overflow:hidden;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.8);height:32px;display:flex;align-items:center}
+.ticker-track{display:flex;white-space:nowrap;animation:tick 52s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+.t-item{font-size:10px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);padding:0 28px;border-right:1px solid var(--border);flex-shrink:0}
+.t-item .dot{color:var(--cyan);margin-right:8px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── LAYOUT ── */
+.page{max-width:1120px;margin:0 auto;padding:0 48px;position:relative;z-index:1}
+section.section{padding:72px 0;border-bottom:1px solid var(--border)}
+section.section:last-of-type{border-bottom:none}
+
+/* ── UTILS ── */
+.lbl{font-size:11.5px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
+.lbl-cyan{color:var(--cyan)}
+.lbl-amber{color:var(--amber)}
+.sec-head{display:flex;align-items:center;gap:20px;margin-bottom:40px}
+.sec-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}.rv-d4{transition-delay:.32s}
+p{color:var(--muted);font-size:15.5px;line-height:1.85}
+strong{color:var(--ice);font-weight:600}
+
+/* ── BTNS ── */
+.btn-primary{background:var(--cyan);color:var(--black);border:none;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:14px 28px;cursor:pointer;transition:opacity .2s;text-decoration:none;display:inline-block;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;padding:14px 28px;cursor:pointer;transition:color .2s,border-color .2s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{color:var(--ice);border-color:var(--muted)}
+.btn-amber{background:var(--amber);color:var(--black);border:none;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:14px 28px;cursor:pointer;transition:opacity .2s;text-decoration:none;display:inline-block;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.btn-amber:hover{opacity:.85}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* ── HERO ── */
+.hero{padding-top:80px;padding-bottom:64px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan-border),transparent)}
+.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.hero-level{font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan-border);padding:5px 14px;background:var(--cyan-dim)}
+.hero-sep{width:1px;height:14px;background:var(--dim)}
+.hero-tag{font-size:10px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
+.hero-h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(38px,6vw,72px);line-height:.93;letter-spacing:-1.5px;color:var(--ice);margin-bottom:28px;max-width:860px}
+.hero-h1 .line-cyan{color:var(--cyan)}
+.hero-h2{font-size:clamp(15px,1.8vw,19px);color:var(--muted);max-width:640px;line-height:1.75;margin-bottom:40px;font-weight:400}
+.hero-microcopy{font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding-top:12px;border-top:1px solid var(--border);margin-top:16px;display:flex;align-items:center;gap:8px}
+.hero-microcopy::before{content:'';width:24px;height:1px;background:var(--cyan)}
+.hero-bg-word{position:absolute;right:-20px;bottom:-30px;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(80px,14vw,180px);color:rgba(10,191,204,0.025);line-height:1;pointer-events:none;user-select:none;letter-spacing:-4px}
+
+/* ── ENEMY SECTION ── */
+.enemy-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.enemy-callout{background:var(--card);border-left:2px solid var(--cyan);padding:28px 32px;position:relative;overflow:hidden;margin-top:32px}
+.enemy-callout::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.enemy-callout::after{content:'SISTEMA';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:64px;font-weight:900;color:rgba(10,191,204,0.04);line-height:1;pointer-events:none}
+.ec-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:var(--ice);line-height:1.65;position:relative;z-index:1}
+.ec-text em{color:var(--cyan);font-style:normal;font-weight:700}
+.enemy-compare{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:40px}
+.compare-col{background:var(--card);padding:24px}
+.compare-col.bad{border-top:2px solid var(--dim)}
+.compare-col.good{border-top:2px solid var(--cyan)}
+.compare-label{font-size:10px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;margin-bottom:16px}
+.compare-col.bad .compare-label{color:var(--muted)}
+.compare-col.good .compare-label{color:var(--cyan)}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.compare-list li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.compare-list li::before{content:'—';color:var(--dim);flex-shrink:0}
+.compare-col.good .compare-list li::before{content:'→';color:var(--cyan)}
+
+/* ── 3-CARD GRID ── */
+.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:8px}
+.glass-card{background:var(--card);padding:28px 24px;border-top:2px solid var(--cyan);position:relative;overflow:hidden;transition:background .3s}
+.glass-card:hover{background:var(--card2)}
+.glass-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 40%,transparent)}
+.gc-num{font-family:'Playfair Display',serif;font-size:11.5px;font-weight:700;color:var(--cyan);opacity:.5;margin-bottom:16px;letter-spacing:.08em}
+.gc-title{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--ice);margin-bottom:10px;line-height:1.3}
+.gc-body{font-size:15px;color:var(--muted);line-height:1.8}
+.gc-icon{font-size:22px;margin-bottom:16px;display:block}
+
+/* ── METHOD CARDS ── */
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:8px}
+.method-card{background:var(--card);padding:32px 26px;border-top:2px solid var(--cyan);position:relative}
+.method-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 30%,transparent)}
+.mc-step{font-size:11px;font-weight:700;letter-spacing:.38em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.mc-step::after{content:'';flex:1;height:1px;background:var(--border)}
+.mc-title{font-family:'Playfair Display',serif;font-weight:700;font-size:22px;color:var(--ice);margin-bottom:4px}
+.mc-sub{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.mc-body{font-size:15px;color:var(--muted);line-height:1.8}
+.method-microcopy{font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:24px;text-align:center;padding-top:20px;border-top:1px solid var(--border)}
+.method-microcopy em{color:var(--cyan);font-style:normal}
+
+/* ── CURRICULUM ── */
+.curriculum-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:8px}
+.cur-module{background:var(--card);padding:32px 26px;border-top:2px solid var(--cyan);position:relative}
+.cur-module::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 30%,transparent)}
+.mod-label{font-size:11px;font-weight:700;letter-spacing:.38em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.mod-title{font-family:'Playfair Display',serif;font-weight:700;font-size:19px;color:var(--ice);margin-bottom:20px;line-height:1.3;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.mod-list li{font-size:14.5px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.mod-list li::before{content:'//';color:var(--cyan);font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+
+/* ── PBL SECTION ── */
+.pbl-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.pbl-checklist{display:flex;flex-direction:column;gap:2px;margin-top:24px}
+.pbl-step{background:var(--card);padding:24px 26px;display:flex;align-items:flex-start;gap:20px;border-left:2px solid transparent;transition:border-color .3s}
+.pbl-step:hover{border-left-color:var(--cyan)}
+.pbl-step-num{font-family:'Playfair Display',serif;font-weight:700;font-size:28px;color:var(--cyan);opacity:.4;line-height:1;flex-shrink:0;min-width:32px}
+.pbl-step-title{font-size:15px;font-weight:600;color:var(--ice);margin-bottom:4px}
+.pbl-step-body{font-size:14px;color:var(--muted);line-height:1.7}
+.pbl-visual{background:var(--card);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden}
+.pbl-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.pbl-visual-label{font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px}
+.pbl-artifact{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+.pbl-artifact:last-child{border-bottom:none}
+.pbl-artifact-dot{width:6px;height:6px;background:var(--cyan);flex-shrink:0}
+.pbl-artifact-text{font-size:14.5px;color:var(--muted)}
+.pbl-artifact-text strong{color:var(--ice)}
+
+/* ── TOOLS ENV ── */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:8px}
+.tool-card{background:var(--card);padding:28px 24px;border-top:2px solid var(--cyan);position:relative}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 30%,transparent)}
+.tc-icon{font-size:18px;margin-bottom:16px;color:var(--cyan)}
+.tc-title{font-size:15.5px;font-weight:600;color:var(--ice);margin-bottom:8px}
+.tc-body{font-size:14.5px;color:var(--muted);line-height:1.8}
+
+/* ── CREDENTIALS ── */
+.cred-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.badge-grid{display:flex;flex-direction:column;gap:2px}
+.badge-item{background:var(--card);padding:20px 24px;display:flex;align-items:center;gap:16px;border-left:2px solid var(--cyan)}
+.badge-item-icon{color:var(--cyan);font-size:16px;flex-shrink:0}
+.badge-item-title{font-size:15px;font-weight:600;color:var(--ice);margin-bottom:2px}
+.badge-item-sub{font-size:13px;color:var(--muted)}
+.portfolio-card{background:var(--card);border-top:2px solid var(--cyan);padding:28px;position:relative}
+.portfolio-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 40%,transparent)}
+.portfolio-label{font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px}
+.portfolio-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.portfolio-list li{font-size:14.5px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.portfolio-list li::before{content:'→';color:var(--cyan);flex-shrink:0}
+
+/* ── FILTER ── */
+.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:8px}
+.filter-col{background:var(--card);padding:32px 28px}
+.filter-col.yes{border-top:2px solid var(--cyan)}
+.filter-col.no{border-top:2px solid var(--steel)}
+.filter-col.yes::before,.filter-col.no::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
+.filter-col{position:relative}
+.filter-col.yes::before{background:linear-gradient(90deg,var(--cyan) 40%,transparent)}
+.filter-col.no::before{background:linear-gradient(90deg,var(--dim) 40%,transparent)}
+.filter-head{font-size:10px;font-weight:700;letter-spacing:.36em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.filter-col.yes .filter-head{color:var(--cyan)}
+.filter-col.no .filter-head{color:var(--muted)}
+.filter-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.filter-list li{font-size:13.5px;color:var(--muted);line-height:1.6;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.filter-list li:last-child{border-bottom:none;padding-bottom:0}
+
+/* ── ECOSYSTEM ── */
+.eco-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.eco-card{background:var(--card);border-top:2px solid var(--cyan);padding:32px;position:relative;overflow:hidden}
+.eco-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 50%,transparent)}
+.eco-card-label{font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.eco-card-title{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--ice);margin-bottom:10px;line-height:1.3}
+.eco-card-body{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
+.chip{font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--muted)}
+.chip.active{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim)}
+
+/* ── FAQ ── */
+.faq-list{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+.faq-item{background:var(--card);overflow:hidden}
+.faq-q{width:100%;text-align:left;background:none;border:none;color:var(--ice);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:24px 28px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:background .2s}
+.faq-q:hover{background:rgba(10,191,204,0.04)}
+.faq-icon{width:20px;height:20px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--cyan);font-size:12px;transition:transform .3s}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 28px 24px;font-size:13.5px;color:var(--muted);line-height:1.85;border-top:1px solid var(--border)}
+.faq-a-inner em{color:var(--cyan);font-style:normal}
+
+/* ── FINAL CTA ── */
+.final-cta-section{padding:80px 0;text-align:center;position:relative;overflow:hidden}
+.final-cta-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan-border),transparent)}
+.final-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(60px,12vw,160px);color:rgba(10,191,204,0.025);white-space:nowrap;pointer-events:none;user-select:none}
+.final-h2{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(28px,4.5vw,52px);line-height:1.05;color:var(--ice);margin-bottom:16px;position:relative;z-index:1;letter-spacing:-.5px}
+.final-h2 em{color:var(--cyan);font-style:normal}
+.final-sub{font-size:14px;color:var(--muted);margin-bottom:36px;position:relative;z-index:1}
+.final-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.final-microcopy{margin-top:20px;font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);position:relative;z-index:1}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--cyan);max-width:520px;width:100%;padding:40px;position:relative;max-height:90vh;overflow-y:auto}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 40%,transparent)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
+.modal-close:hover{color:var(--ice)}
+.modal-title{font-size:10px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.modal-h2{font-family:'Playfair Display',serif;font-weight:700;font-size:22px;color:var(--ice);margin-bottom:28px;line-height:1.3}
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:var(--black);border:1px solid var(--border);color:var(--ice);font-family:'Inter',sans-serif;font-size:13.5px;padding:11px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--cyan)}
+.form-field select{cursor:pointer}
+.form-field select option{background:var(--card)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-success{display:none;text-align:center;padding:20px}
+.form-success.show{display:block}
+.fs-icon{font-size:32px;margin-bottom:12px;color:var(--cyan)}
+.fs-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--ice);margin-bottom:8px}
+.fs-body{font-size:13px;color:var(--muted)}
+
+/* ── STICKY MOBILE CTA ── */
+.sticky-mobile{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(10,10,10,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 20px;transform:translateY(100%);transition:transform .4s ease}
+.sticky-mobile.show{transform:translateY(0)}
+
+/* ── SECTION HEADERS ── */
+.h2-section{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(22px,3.5vw,40px);color:var(--ice);letter-spacing:-.5px;line-height:1.1}
+.h2-section em{color:var(--cyan);font-style:normal}
+.h2-sub{font-size:16px;color:var(--muted);margin-top:10px;max-width:560px;line-height:1.8}
+
+/* ── DIVIDER ── */
+.divider-line{height:1px;background:var(--border);margin:0}
+
+/* ── HERO STATS ── */
+.hero-stats{display:flex;gap:40px;margin-top:36px;padding-top:24px;border-top:1px solid var(--border);flex-wrap:wrap}
+.hstat{text-align:left}
+.hstat-n{font-family:'Playfair Display',serif;font-weight:700;font-size:28px;color:var(--cyan);line-height:1;margin-bottom:4px}
+.hstat-l{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .page{padding:0 24px}
+  .topnav{padding:0 24px}
+  .card-grid-3,.method-grid,.curriculum-timeline,.tools-grid{grid-template-columns:1fr}
+  .filter-grid,.eco-layout,.cred-layout,.pbl-layout,.enemy-grid{grid-template-columns:1fr}
+  .hero-h1{font-size:clamp(32px,8vw,52px)}
+  .enemy-compare{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .sticky-mobile{display:block}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- NAV -->
+<nav class="topnav" id="topnav" role="navigation">
+  <div class="nav-brand"><a href="https://siberiainstitute.com" target="_blank" style="display:block;line-height:0"><img src="data:image/avif;base64,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" alt="Siberia Institute" class="nav-logo"></a></div>
+  <div class="nav-links">
+    <a href="#apply-modal" class="nav-btn" onclick="openModal(event)">Tornar-se um Operador</a>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-rail">
+  <div class="ticker-track">
+    <span class="t-item"><span class="dot">◆</span>Nível 1 , Tatic</span>
+    <span class="t-item"><span class="dot">◆</span>The Operator</span>
+    <span class="t-item"><span class="dot">◆</span>30 Dias de Missão</span>
+    <span class="t-item"><span class="dot">◆</span>Engenharia de Contexto</span>
+    <span class="t-item"><span class="dot">◆</span>Eficiência Humano-Aumentada</span>
+    <span class="t-item"><span class="dot">◆</span>Prompt Architect</span>
+    <span class="t-item"><span class="dot">◆</span>LLM de Mercado</span>
+    <span class="t-item"><span class="dot">◆</span>Sistema Operacional Pessoal</span>
+    <span class="t-item"><span class="dot">◆</span>Siberia Institute</span>
+    <!-- dup -->
+    <span class="t-item"><span class="dot">◆</span>Nível 1 , Tatic</span>
+    <span class="t-item"><span class="dot">◆</span>The Operator</span>
+    <span class="t-item"><span class="dot">◆</span>30 Dias de Missão</span>
+    <span class="t-item"><span class="dot">◆</span>Engenharia de Contexto</span>
+    <span class="t-item"><span class="dot">◆</span>Eficiência Humano-Aumentada</span>
+    <span class="t-item"><span class="dot">◆</span>Prompt Architect</span>
+    <span class="t-item"><span class="dot">◆</span>LLM de Mercado</span>
+    <span class="t-item"><span class="dot">◆</span>Sistema Operacional Pessoal</span>
+    <span class="t-item"><span class="dot">◆</span>Siberia Institute</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ══ FRAME 1: HERO ══ -->
+  <section class="hero rv">
+    <div class="hero-bg-word">OPERATOR</div>
+    <div class="hero-eyebrow rv">
+      <span class="hero-level">Nível 1 , Tatic</span>
+      <span class="hero-sep"></span>
+      <span class="hero-tag">The Operator</span>
+    </div>
+    <h1 class="hero-h1 rv rv-d1">
+      SAIA DO<br>
+      <span class="line-cyan">TRABALHO BRAÇAL.</span><br>
+      DOMINE A<br>MÁQUINA.
+    </h1>
+    <p class="hero-h2 rv rv-d2">Engenharia de Contexto para Eficiência Humano-Aumentada: escale o uso de IA no dia a dia e construa produtividade real com pensamento crítico e profundo.</p>
+    <div class="ctas rv rv-d3">
+      <a href="#" class="btn-primary" onclick="openModal(event)">Tornar-se um Operador</a>
+      <a href="#plano-missao" class="btn-ghost">Ver o Plano de Missão</a>
+    </div>
+    <div class="hero-stats rv rv-d4">
+      <div class="hstat">
+        <div class="hstat-n">30</div>
+        <div class="hstat-l">Dias de Missão</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-n">3</div>
+        <div class="hstat-l">Missões de Operação</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-n">1</div>
+        <div class="hstat-l">Indústria de Agentes Construída</div>
+      </div>
+    </div>
+    <div class="hero-microcopy rv rv-d4">30 dias de missão. Execução guiada por artefatos.</div>
+  </section>
+
+  <!-- ══ FRAME 2: ENEMY ══ -->
+  <section class="section rv" id="inimigo">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 02</span>
+      <span class="lbl">O Inimigo</span>
+    </div>
+    <div class="enemy-grid">
+      <div class="rv rv-d1">
+        <h2 class="h2-section">O INIMIGO É O<br><em>BRAÇAL INVISÍVEL.</em></h2>
+        <p class="h2-sub">Você trabalha muito, mas produz pouco output composto. O dia vira tarefa, a semana vira incêndio, e você perde o ativo mais caro: foco.</p>
+        <div class="enemy-callout rv rv-d2">
+          <p class="ec-text">IA usada como brinquedo gera <em>distração</em>. IA usada como sistema gera <em>vantagem</em>.</p>
+        </div>
+      </div>
+      <div class="rv rv-d2">
+        <div class="enemy-compare">
+          <div class="compare-col bad">
+            <div class="compare-label">Antes</div>
+            <ul class="compare-list">
+              <li>Tarefas dispersas sem sistema</li>
+              <li>IA usada por impulso, sem contexto</li>
+              <li>Foco fragmentado em incêndios</li>
+              <li>Output baixo, esforço alto</li>
+              <li>Ferramentas sem arquitetura</li>
+            </ul>
+          </div>
+          <div class="compare-col good">
+            <div class="compare-label">Depois</div>
+            <ul class="compare-list">
+              <li>Fluxo com IA estruturado</li>
+              <li>Contexto preciso, output composto</li>
+              <li>Foco direcionado por missão</li>
+              <li>Rotina operacional com LLM</li>
+              <li>Sistema pessoal auditável</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 3: PROMISE ══ -->
+  <section class="section rv" id="entregaveis">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 03</span>
+      <span class="lbl">Promessa e Entregáveis</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">A MISSÃO: CONSTRUIR SEU<br><em>SISTEMA OPERACIONAL</em> PESSOAL COM IA</h2>
+      <p class="h2-sub">Aqui transformamos alguém que nunca escreveu um prompt em um arquiteto de contexto com fluência de alto nível em produtividade.</p>
+    </div>
+    <div class="card-grid-3" style="margin-top:36px">
+      <div class="glass-card rv rv-d1">
+        <div class="gc-num">01 / O Que Você Sai Levando</div>
+        <h3 class="gc-title">Sistema Operacional Pessoal com LLM de Mercado</h3>
+        <p class="gc-body">Rotinas, estruturas e fluxos personalizados para operar com IA de forma sistemática, não por impulso.</p>
+      </div>
+      <div class="glass-card rv rv-d2">
+        <div class="gc-num">02 / O Que Você Sai Levando</div>
+        <h3 class="gc-title">Sua Biblioteca de Contexto</h3>
+        <p class="gc-body">Prompts e meta-prompts reutilizáveis construídos para o seu domínio, seu ritmo e seus objetivos de execução.</p>
+      </div>
+      <div class="glass-card rv rv-d3">
+        <div class="gc-num">03 / O Que Você Sai Levando</div>
+        <h3 class="gc-title">Primeiro Agente de Produtividade Pessoal (PBL)</h3>
+        <p class="gc-body">Seu copiloto funcional, construído e validado por você ao longo da missão, pronto para virar rotina.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 4: METHOD ══ -->
+  <section class="section rv" id="metodologia">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 04</span>
+      <span class="lbl">Metodologia</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">METODOLOGIA:<br><em>EXECUÇÃO COM DISCIPLINA</em></h2>
+      <p class="h2-sub">Teoria, direcionamento tático e prática guiada. Não é aula. É cadência por missão.</p>
+    </div>
+    <div class="method-grid" style="margin-top:36px">
+      <div class="method-card rv rv-d1">
+        <div class="mc-step">Etapa 01</div>
+        <h3 class="mc-title">Teoria</h3>
+        <div class="mc-sub">Base de Guerra</div>
+        <p class="mc-body">Fundamentos reais sem hype para entender IA e aplicar com critério. O que é, o que não é, e por que a maioria erra a abordagem.</p>
+      </div>
+      <div class="method-card rv rv-d2">
+        <div class="mc-step">Etapa 02</div>
+        <h3 class="mc-title">Mentoria Gravada</h3>
+        <div class="mc-sub">Direcionamento Tático</div>
+        <p class="mc-body">Correção de rota, clareza de execução e padrões de excelência por entregável. Você sabe o que ajustar e por quê.</p>
+      </div>
+      <div class="method-card rv rv-d3">
+        <div class="mc-step">Etapa 03</div>
+        <h3 class="mc-title">Prática Guiada</h3>
+        <div class="mc-sub">PBL</div>
+        <p class="mc-body">Você constrói, valida e ajusta até virar rotina operacional. O aprendizado só fixa quando vira artefato.</p>
+      </div>
+    </div>
+    <div class="method-microcopy">Não é aula. É <em>cadência por missão</em>.</div>
+  </section>
+
+  <!-- ══ FRAME 5: CURRICULUM ══ -->
+  <section class="section rv" id="plano-missao">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 05</span>
+      <span class="lbl">Plano de Missão</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">PLANO DE MISSÃO<br><em>(30 DIAS)</em></h2>
+      <p class="h2-sub">Três missões de operação, progressivos e encadeados. Sem aulas. Missões com entregáveis.</p>
+    </div>
+    <div class="curriculum-timeline" style="margin-top:36px">
+      <div class="cur-module rv rv-d1">
+        <div class="mod-label">Missão 01</div>
+        <h3 class="mod-title">Inteligência de Combate , Fundamentos</h3>
+        <ul class="mod-list">
+          <li>A verdadeira história da IA (sem hype)</li>
+          <li>Vale da morte da tecnologia: por que projetos falham</li>
+          <li>Taxonomia da IA: conhecer o inimigo e o aliado</li>
+        </ul>
+      </div>
+      <div class="cur-module rv rv-d2">
+        <div class="mod-label">Missão 02</div>
+        <h3 class="mod-title">A Arte da Pergunta , Engenharia de Prompt</h3>
+        <ul class="mod-list">
+          <li>Maiêutica Digital: extrair conhecimento com perguntas certas</li>
+          <li>Deep Nexialism: camada oculta da arquitetura</li>
+          <li>Anatomia do meta-prompt</li>
+        </ul>
+      </div>
+      <div class="cur-module rv rv-d3">
+        <div class="mod-label">Missão 03</div>
+        <h3 class="mod-title">Produtividade Tática , O Sistema Operacional</h3>
+        <ul class="mod-list">
+          <li>Construindo seu Sistema Operacional com LLM de mercado</li>
+          <li>Decomposição de problemas complexos</li>
+          <li>PBL: construção do seu primeiro agente de produtividade pessoal</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 6: PBL ══ -->
+  <section class="section rv" id="pbl">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 06</span>
+      <span class="lbl">Projeto Prático</span>
+    </div>
+    <div class="pbl-layout">
+      <div class="rv rv-d1">
+        <h2 class="h2-section">PBL: SEU PRIMEIRO<br><em>AGENTE DE PRODUTIVIDADE</em> PESSOAL</h2>
+        <p class="h2-sub" style="margin-bottom:8px">Você vai instalar um copiloto para operar tarefas recorrentes com contexto: planejar, decidir e executar com menos fricção usando LLM de mercado.</p>
+        <div class="pbl-checklist" style="margin-top:28px">
+          <div class="pbl-step">
+            <div class="pbl-step-num">01</div>
+            <div>
+              <div class="pbl-step-title">Definir o Job to Be Done</div>
+              <div class="pbl-step-body">Mapeie o que mais drena seu tempo e merece um copiloto dedicado.</div>
+            </div>
+          </div>
+          <div class="pbl-step">
+            <div class="pbl-step-num">02</div>
+            <div>
+              <div class="pbl-step-title">Criar o Pacote de Contexto</div>
+              <div class="pbl-step-body">Defina inputs, regras e limites do agente. A qualidade do contexto determina a qualidade do output.</div>
+            </div>
+          </div>
+          <div class="pbl-step">
+            <div class="pbl-step-num">03</div>
+            <div>
+              <div class="pbl-step-title">Validar e Transformar em Rotina</div>
+              <div class="pbl-step-body">Teste, ajuste e formalize como SOP pessoal. Só vira artefato quando vira hábito operacional.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:28px">
+          <a href="#" class="btn-primary" onclick="openModal(event)">Tornar-se um Operador</a>
+        </div>
+      </div>
+      <div class="rv rv-d2">
+        <div class="pbl-visual">
+          <div class="pbl-visual-label">Artefatos do PBL</div>
+          <div class="pbl-artifact">
+            <div class="pbl-artifact-dot"></div>
+            <div class="pbl-artifact-text"><strong>Agente Pessoal</strong> , copiloto configurado para seu domínio e rotina</div>
+          </div>
+          <div class="pbl-artifact">
+            <div class="pbl-artifact-dot"></div>
+            <div class="pbl-artifact-text"><strong>Sistema Operacional com LLM de Mercado</strong> , estrutura de fluxo e contexto</div>
+          </div>
+          <div class="pbl-artifact">
+            <div class="pbl-artifact-dot"></div>
+            <div class="pbl-artifact-text"><strong>Biblioteca de Prompts</strong> , coleção de meta-prompts reutilizáveis por categoria</div>
+          </div>
+          <div class="pbl-artifact">
+            <div class="pbl-artifact-dot"></div>
+            <div class="pbl-artifact-text"><strong>SOP Pessoal</strong> , procedimento operacional validado para execução diária</div>
+          </div>
+          <div class="pbl-artifact">
+            <div class="pbl-artifact-dot"></div>
+            <div class="pbl-artifact-text"><strong>Credencial Prompt Architect</strong> , portfólio de artefatos documentado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 7: TOOLS ══ -->
+  <section class="section rv" id="ambiente">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 07</span>
+      <span class="lbl">Ambiente & Instrumentos</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">AMBIENTE DE OPERAÇÃO<br><em>SEM FRICÇÃO</em></h2>
+    </div>
+    <div class="tools-grid" style="margin-top:36px">
+      <div class="tool-card rv rv-d1">
+        <div class="tc-icon">⚙</div>
+        <div class="tc-title">Estrutura e Instrumentos</div>
+        <p class="tc-body">Ambiente de aprendizado organizado por missões, não por missões teóricos. Cada etapa tem um entregável claro como critério de avanço.</p>
+      </div>
+      <div class="tool-card rv rv-d2">
+        <div class="tc-icon">◎</div>
+        <div class="tc-title">Expectativas, Políticas e Assessment</div>
+        <p class="tc-body">Padrão de excelência definido antes de começar. O que conta como entregue, o que conta como aprovado, e o que conta como excelência de Operador.</p>
+      </div>
+      <div class="tool-card rv rv-d3">
+        <div class="tc-icon">◈</div>
+        <div class="tc-title">Suporte, FAQ e Grupos da Turma</div>
+        <p class="tc-body">Acesso ao grupo tático da turma, suporte de execução e FAQ documentado. Você não opera sozinho , opera com o padrão Siberia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 8: CREDENTIALS ══ -->
+  <section class="section rv" id="credencial">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 08</span>
+      <span class="lbl">Credencial</span>
+    </div>
+    <div class="cred-layout">
+      <div class="rv rv-d1">
+        <h2 class="h2-section">CREDENCIAL DO<br><em>NÍVEL TÁTICO</em></h2>
+        <p class="h2-sub">Não é certificado de presença. É portfólio de artefatos entregues que documentam capacidade operacional real.</p>
+        <div class="badge-grid" style="margin-top:32px">
+          <div class="badge-item">
+            <div class="badge-item-icon">◆</div>
+            <div>
+              <div class="badge-item-title">Eficiência Humano-Aumentada</div>
+              <div class="badge-item-sub">Nível Tático , Certificação Siberia Institute</div>
+            </div>
+          </div>
+          <div class="badge-item">
+            <div class="badge-item-icon">◈</div>
+            <div>
+              <div class="badge-item-title">Prompt Architect</div>
+              <div class="badge-item-sub">Arquitetura de prompts aplicada à produtividade</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rv rv-d2">
+        <div class="portfolio-card">
+          <div class="portfolio-label">Portfólio de Artefatos Entregues</div>
+          <ul class="portfolio-list">
+            <li>Agente de produtividade pessoal funcional</li>
+            <li>Sistema Operacional com LLM de mercado</li>
+            <li>Sua Biblioteca de Contexto (prompts e meta-prompts)</li>
+            <li>SOP pessoal documentado e validado</li>
+          </ul>
+          <p style="font-size:12.5px;color:var(--muted);line-height:1.8;border-top:1px solid var(--border);padding-top:16px">O portfólio é o argumento. Não o diploma.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 9: FILTER ══ -->
+  <section class="section rv" id="para-quem">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 09</span>
+      <span class="lbl">Filtro</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">PARA QUEM É<br><em>(E PARA QUEM NÃO É)</em></h2>
+    </div>
+    <div class="filter-grid" style="margin-top:36px">
+      <div class="filter-col yes rv rv-d1">
+        <div class="filter-head">É para</div>
+        <ul class="filter-list">
+          <li>Profissionais sobrecarregados que precisam de foco e execução , não de mais uma ferramenta</li>
+          <li>Consultores e líderes que querem produtividade tática com IA integrada à rotina real</li>
+          <li>Quem quer parar de testar ferramenta e começar a operar sistema</li>
+        </ul>
+      </div>
+      <div class="filter-col no rv rv-d2">
+        <div class="filter-head">Não é para</div>
+        <ul class="filter-list">
+          <li>Quem busca atalho, prompt pronto e truque rápido sem construção de contexto</li>
+          <li>Quem evita rotina, disciplina e entrega de artefatos como critério de aprendizado</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 10: ECOSYSTEM ══ -->
+  <section class="section rv" id="ecossistema">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 10</span>
+      <span class="lbl">Ecossistema</span>
+    </div>
+    <div class="eco-layout">
+      <div class="rv rv-d1">
+        <h2 class="h2-section">A PRÓXIMA PATENTE<br><em style="color:var(--cyan)">(SE VOCÊ QUISER IR ALÉM)</em></h2>
+        <p class="h2-sub">Productivity OS é a base. A próxima etapa é transformar eficiência pessoal em engenharia de receita.</p>
+        <div class="chips" style="margin-top:28px">
+          <span class="chip active">Start Small , aqui</span>
+          <span class="chip">Build Fast</span>
+          <span class="chip">Scale What Works</span>
+        </div>
+      </div>
+      <div class="rv rv-d2">
+        <div class="eco-card">
+          <div class="eco-card-label">Próxima Patente</div>
+          <h3 class="eco-card-title">GTM AI Engineering: The Strategist</h3>
+          <p class="eco-card-body">Arquitetura de escala de receita. Transforme o domínio operacional em motor de crescimento sistemático com IA no núcleo estratégico.</p>
+          <a href="#" class="btn-ghost" style="font-size:10px;padding:10px 20px">Ver GTM AI Engineering →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 11: FAQ ══ -->
+  <section class="section rv" id="faq">
+    <div class="sec-head">
+      <span class="lbl lbl-cyan">Nível 11</span>
+      <span class="lbl">FAQ Tático</span>
+    </div>
+    <div class="rv rv-d1">
+      <h2 class="h2-section">FAQ TÁTICO<br><em>(NÍVEL 1)</em></h2>
+    </div>
+    <div class="faq-list" style="margin-top:32px">
+      <div class="faq-item rv rv-d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Preciso ser técnico para participar?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Não. O foco é em <em>contexto e operação</em>, não em programação ou infraestrutura técnica. Você aprende a pensar como um arquiteto de contexto, não como um engenheiro de software. O que importa é sua capacidade de raciocinar com clareza sobre o problema que a IA vai resolver.</div>
+        </div>
+      </div>
+      <div class="faq-item rv rv-d2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Isso serve para qualquer área profissional?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Sim. Você constrói <em>seu próprio Sistema Operacional</em> personalizado para o seu domínio, sua rotina e suas tarefas recorrentes. Gestão, vendas, marketing, produto, consultoria, CS, jurídico , o método é agnóstico à área. O contexto que você cria é específico para você.</div>
+        </div>
+      </div>
+      <div class="faq-item rv rv-d3">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          O que eu entrego no final do programa?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner"><em>Agente pessoal</em> funcional + <em>Sistema Operacional com LLM de mercado</em> + sua biblioteca de contexto com prompts e meta-prompts. Não é trabalho teórico. É portfólio de artefatos que documentam capacidade operacional real.</div>
+        </div>
+      </div>
+      <div class="faq-item rv rv-d4">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Qual é a carga horária e o ritmo esperado?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">30 dias de missão com cadência definida. O ritmo é de <em>execução guiada por entregáveis</em>: você avança quando entrega, não quando o tempo passa. Planeje em torno de 1 a 2 horas por dia de comprometimento real de execução.</div>
+        </div>
+      </div>
+      <div class="faq-item rv rv-d4">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Qual LLM de mercado é usado?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">O programa é desenhado para ser <em>agnóstico a ferramenta</em>. O que você aprende é a construir contexto com precisão , e esse domínio funciona com qualquer LLM de mercado disponível. A arquitetura não muda com a ferramenta.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FRAME 12: FINAL CTA ══ -->
+  <section class="final-cta-section rv" id="aplicar">
+    <div class="final-bg">OPERATOR</div>
+    <span class="lbl lbl-cyan" style="display:block;margin-bottom:20px">Nível 12 , Aplicação</span>
+    <h2 class="final-h2">PRONTO PARA SAIR DO BRAÇAL<br>E <em>OPERAR COM PRECISÃO?</em></h2>
+    <p class="final-sub">Disciplina + execução guiada por entregáveis.</p>
+    <div class="final-ctas">
+      <a href="#" class="btn-primary" onclick="openModal(event)">Tornar-se um Operador</a>
+      <a href="https://warroom.siberiainstitute.com" class="btn-ghost" target="_blank">Falar com o Time</a>
+    </div>
+    <div class="final-microcopy">30 dias. Artefatos reais. Portfólio documentado.</div>
+  </section>
+
+</div><!-- /page -->
+
+<!-- ══ MODAL: APPLY ══ -->
+<div class="modal-overlay" id="apply-modal" onclick="closeModalIfOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Aplicação</div>
+    <h2 class="modal-h2">[AI] Productivity OS<br>The Operator</h2>
+    <div id="apply-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Nome</label>
+          <input type="text" placeholder="Seu nome completo">
+        </div>
+        <div class="form-field">
+          <label>WhatsApp</label>
+          <input type="tel" placeholder="+55 11 9 0000-0000">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com">
+      </div>
+      <div class="form-field">
+        <label>Objetivo em 30 dias</label>
+        <select>
+          <option value="" disabled selected>Selecione</option>
+          <option>Foco</option>
+          <option>Rotina</option>
+          <option>Execução</option>
+          <option>Decisão</option>
+          <option>Automação pessoal</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Maior dor hoje</label>
+        <input type="text" placeholder="Descreva em uma frase">
+      </div>
+      <div class="form-field">
+        <label>Área principal</label>
+        <select>
+          <option value="" disabled selected>Selecione</option>
+          <option>Gestão</option>
+          <option>Vendas</option>
+          <option>Marketing</option>
+          <option>Produto</option>
+          <option>CS</option>
+          <option>Consultoria</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <button class="btn-primary" style="width:100%;padding:16px;font-size:11px" onclick="submitForm()">Enviar Aplicação</button>
+    </div>
+    <div class="form-success" id="form-success">
+      <div class="fs-icon">◆</div>
+      <div class="fs-title">Recebido.</div>
+      <p class="fs-body">Você recebe as instruções de onboarding e início da missão em breve. Prepare-se para operar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-mobile" id="sticky-mobile">
+  <a href="#" class="btn-primary" style="width:100%;text-align:center;display:block;padding:15px" onclick="openModal(event)">Aplicar , The Operator</a>
+</div>
+
+<script>
+// NAV REVEAL
+const nav = document.getElementById('topnav');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const s = window.scrollY;
+  if(s > 120) nav.classList.add('show');
+  else nav.classList.remove('show');
+  lastScroll = s;
+}, {passive:true});
+
+// SCROLL REVEAL
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+
+// STICKY MOBILE
+const stickyMobile = document.getElementById('sticky-mobile');
+let shown30 = false;
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  if(pct > 0.28 && !shown30){ stickyMobile.classList.add('show'); shown30 = true; }
+},{passive:true});
+
+// FAQ
+function toggleFaq(btn){
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// MODAL
+function openModal(e){ if(e) e.preventDefault(); document.getElementById('apply-modal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(){ document.getElementById('apply-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeModalIfOverlay(e){ if(e.target === document.getElementById('apply-modal')) closeModal(); }
+function submitForm(){
+  document.getElementById('apply-form').style.display='none';
+  document.getElementById('form-success').classList.add('show');
+}
+
+// GLITCH HOVER on btns
+document.querySelectorAll('.btn-primary').forEach(btn => {
+  btn.addEventListener('mouseenter', function(){
+    this.style.transform = 'translate(-1px,0)';
+    setTimeout(()=>{ this.style.transform='translate(1px,0)'; }, 60);
+    setTimeout(()=>{ this.style.transform=''; }, 120);
+  });
+});
+</script>
+</body>
+</html>
